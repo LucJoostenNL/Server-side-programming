@@ -12,38 +12,41 @@ namespace Client.Controllers
 {
     public class CartController : Controller
     {
-        //private readonly Cart _cart;
+        private readonly Cart _cart;
 
-        //public CartController(Cart cart)
-        //{
-        //    _cart = cart;
-        //}
-        //public async Task<RedirectToActionResult> AddToCart(int id, DayOfWeek dayOfWeek)
-        //{
-        //    var result = await MealMethods.GetMealById(id);
-
-        //    Meal meal = result.ToObject<Meal>();
-
-        //    if (meal != null)
-        //    {
-        //        _cart.AddItem(meal, dayOfWeek);
-        //    }
-        //    return RedirectToAction("Index", "Cart");
-        //}
+        public CartController(Cart cart)
+        {
+            _cart = cart;
+        }
+//        public async Task<RedirectToActionResult> AddToCart(int id, DayOfWeek dayOfWeek)
+//        {
+//            var result = await MealMethods.GetMealById(id);
+//
+//            Meal meal = result.ToObject<Meal>();
+//
+//            if (meal != null)
+//            {
+//                _cart.AddItem(meal, dayOfWeek);
+//            }
+//            return RedirectToAction("Index", "Cart");
+//        }
 
         public IActionResult Cart()
         {
             return View("Cart");
         }
 
-        //public ViewResult Index(string returnUrl)
-        //{
-        //    return View(new CartIndexViewModel
-        //    {
-        //        Cart = _cart,
-        //        ReturnUrl = returnUrl
-        //    });
-        //}
+//        public ViewResult Index(string returnUrl)
+//        {
+//            return View(new CartIndexViewModel
+//            {
+//                Cart = _cart,
+//                ReturnUrl = returnUrl
+//            });
+//        }
+//        public ViewResult Index() {
+//            return View("Order/Order");
+//        }
 
     }
 }

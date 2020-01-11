@@ -26,13 +26,18 @@ namespace Domain
 
         public virtual IEnumerable<CartLine> Lines => _lineCollection;
 
-       
+        public virtual string StartDate { get; set; }
 
-       
+        public virtual string EndDate { get; set; }
+
+        public virtual void Save() {
+
+        }
+
 
         // Prijs op basis van gerecht prijs en de grootte per week bestelling
         //public decimal ComputeTotalValue() =>
-            
+
     }
 
 

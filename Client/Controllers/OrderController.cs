@@ -12,6 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Client.Extentsions.Meal;
 using System.Globalization;
+using Client.Models.Order;
+using Newtonsoft.Json.Schema;
 
 namespace Client.Controllers
 {
@@ -19,11 +21,14 @@ namespace Client.Controllers
     {
         private readonly IMealService _mealService;
         private readonly IDishService _dishService;
+        private Cart _cart;
+        private string _startDate = "";
 
-        public OrderController(IMealService service, IDishService dishService)
+        public OrderController(IMealService service, IDishService dishService, Cart cartService)
         {
             _mealService = service;
             _dishService = dishService;
+            _cart = cartService;
         }
 
 
@@ -39,6 +44,12 @@ namespace Client.Controllers
         [HttpPost]
         public IActionResult ChooseWeek(ChooseWeekViewModel model)
         {
+            Debug.WriteLine("dates ------------> " + model.Start);
+            _cart.EndDate = model.End.ToString();
+            _cart.StartDate = model.Start.ToString();
+            Debug.WriteLine(_cart.StartDate);
+            _cart.Save();
+            TempData["start"] = model.Start.ToString();
             if (!User.Identity.IsAuthenticated)
             {
                 TempData["start"] = model.Start;
@@ -63,10 +74,21 @@ namespace Client.Controllers
 
             Dictionary<int, List<Meal>> dict = new Dictionary<int, List<Meal>>();
 
-            foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
-                dict.Add((int)day, new List<Meal>());
+            foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek))) {
+                dict.Add((int) day, new List<Meal>());
+            }
 
-            DateTime startDate = DateTime.Parse(TempData["start"].ToString());
+            /*if (_startDate == "") {
+                if (TempData["start"] != null) {
+                    _startDate = TempData["start"].ToString();
+                } else { _startDate = DateTime.Now.ToString(); }
+            }*/
+            Debug.WriteLine("CART ----------------->  "+ _cart);
+
+            _startDate = DateTime.Now.ToString();
+            TempData["start"] = _cart.StartDate;
+
+            DateTime startDate = DateTime.Parse(_startDate);
 
             //var meals = MealMethods.GetAllWeekMeals(startDate);
 
@@ -82,6 +104,7 @@ namespace Client.Controllers
 
             var dishes = _mealService.MealDish.ToList();
 
+
             foreach (var item in dishes)
             {
                 mealDishes.Add(item);
@@ -92,6 +115,7 @@ namespace Client.Controllers
                 ViewBag.MealDishes = mealDishes;
                 ViewBag.Dishes = allDishes;
                 ViewBag.Dictionary = dict;
+                ViewBag.StartDate = startDate.ToString();
                 return View();
             }
             else
@@ -117,6 +141,11 @@ namespace Client.Controllers
         {
             GregorianCalendar cal = new GregorianCalendar(GregorianCalendarTypes.Localized);
             return cal.GetWeekOfYear(date, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+        }
+
+        public IActionResult AddToCart(int id, DayOfWeek day) {
+            Debug.WriteLine("ID -------------------------------->>>> " + id + " Day -> " + day);
+            return RedirectToAction("Order");
         }
     }
 

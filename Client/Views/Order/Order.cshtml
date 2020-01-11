@@ -1,4 +1,6 @@
-﻿@using Client.Extentsions.Meal;
+﻿@using System.Diagnostics
+@using Client.Extentsions.Meal;
+@model Client.Models.Order.OrderMealViewModel;
 
 @{
     Layout = null;
@@ -41,25 +43,28 @@
                             {
                                 var day = ViewBag.Dictionary[i];
                                 <div class="col-lg-4 mt-2">
-                                    <label class="control-label">@Enum.Parse(typeof(DayOfWeek), "" + i)</label>
-                                    <select class="form-control">
-                                        @foreach (var meal in day)
-                                        {
-                                            var matchingDishes = new List<Domain.Dish>();
-                                            foreach (var mealDish in ViewBag.MealDishes)
-                                            {
-                                                if (mealDish.MealId == meal.Id)
-                                                {
-                                                    var dish = ((List<Domain.Dish>)ViewBag.Dishes).Find(d => d.Id == mealDish.DishId);
-                                                    matchingDishes.Add(dish);
-                                                }
-                                            }
+                                    <form asp-action="AddToCart" asp-controller="Order">
+                                        <label class="control-label">@Enum.Parse(typeof(DayOfWeek), "" + i)</label>
+                                        <input type="hidden" name="day" value="@Enum.Parse(typeof(DayOfWeek), "" + i)" />
+                                        <select class="form-control" name="id">
                                             <option selected value="@null">None</option>
-                                            <option selected value="@meal.Id">
-                                                @String.Join(", ", matchingDishes)
-                                            </option>
-                                        }
-                                    </select>
+                                            <option value="19">test</option>
+                                            <option value="2">2</option>
+                                            @foreach (var meal in day) {
+                                                var matchingDishes = new List<Domain.Dish>();
+                                                foreach (var mealDish in ViewBag.MealDishes) {
+                                                    if (mealDish.MealId == meal.Id) {
+                                                        var dish = ((List<Domain.Dish>)ViewBag.Dishes).Find(d => d.Id == mealDish.DishId);
+                                                        matchingDishes.Add(dish);
+                                                    }
+                                                }
+                                                <option value="@meal.Id">
+                                                    @String.Join(", ", matchingDishes)
+                                                </option>
+                                            }
+                                        </select>
+                                        <button class="btn btn-success" type="submit">Save</button>
+                                    </form>
                                 </div>
                             }
                         </div>
